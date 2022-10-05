@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.btnNewFile = new System.Windows.Forms.Button();
             this.btnOldFile = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
@@ -47,7 +48,7 @@
             this.btnNewFile.Location = new System.Drawing.Point(10, 49);
             this.btnNewFile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnNewFile.Name = "btnNewFile";
-            this.btnNewFile.Size = new System.Drawing.Size(391, 220);
+            this.btnNewFile.Size = new System.Drawing.Size(472, 367);
             this.btnNewFile.TabIndex = 2;
             this.btnNewFile.Text = "New table file";
             this.btnNewFile.UseVisualStyleBackColor = true;
@@ -60,10 +61,10 @@
             this.btnOldFile.AllowDrop = true;
             this.btnOldFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOldFile.Location = new System.Drawing.Point(407, 49);
+            this.btnOldFile.Location = new System.Drawing.Point(488, 49);
             this.btnOldFile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnOldFile.Name = "btnOldFile";
-            this.btnOldFile.Size = new System.Drawing.Size(315, 220);
+            this.btnOldFile.Size = new System.Drawing.Size(315, 367);
             this.btnOldFile.TabIndex = 3;
             this.btnOldFile.Text = "Old table file";
             this.btnOldFile.UseVisualStyleBackColor = true;
@@ -74,7 +75,7 @@
             // btnRun
             // 
             this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRun.Location = new System.Drawing.Point(547, 277);
+            this.btnRun.Location = new System.Drawing.Point(628, 424);
             this.btnRun.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(175, 22);
@@ -90,7 +91,7 @@
             this.txtPinUpFolder.Location = new System.Drawing.Point(10, 24);
             this.txtPinUpFolder.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtPinUpFolder.Name = "txtPinUpFolder";
-            this.txtPinUpFolder.Size = new System.Drawing.Size(592, 23);
+            this.txtPinUpFolder.Size = new System.Drawing.Size(673, 23);
             this.txtPinUpFolder.TabIndex = 5;
             this.txtPinUpFolder.Text = "C:\\vPinball\\PinUPSystem";
             // 
@@ -106,7 +107,7 @@
             // btnSelectPinUpFolder
             // 
             this.btnSelectPinUpFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSelectPinUpFolder.Location = new System.Drawing.Point(607, 24);
+            this.btnSelectPinUpFolder.Location = new System.Drawing.Point(688, 24);
             this.btnSelectPinUpFolder.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnSelectPinUpFolder.Name = "btnSelectPinUpFolder";
             this.btnSelectPinUpFolder.Size = new System.Drawing.Size(115, 22);
@@ -123,13 +124,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(732, 308);
+            this.ClientSize = new System.Drawing.Size(813, 455);
             this.Controls.Add(this.btnSelectPinUpFolder);
             this.Controls.Add(this.lblPinUpFolder);
             this.Controls.Add(this.txtPinUpFolder);
             this.Controls.Add(this.btnRun);
             this.Controls.Add(this.btnOldFile);
             this.Controls.Add(this.btnNewFile);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "frmMain";
             this.Text = "Replace VirtualPinball table";

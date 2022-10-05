@@ -11,7 +11,12 @@
 	<Company></Company>
 	<Copyright>Copyright © Christian Fluhrer 2022</Copyright>
 	<Version>1.0.0</Version>
+	<ApplicationIcon>file_replace_outline_icon_139583.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="file_replace_outline_icon_139583.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.9" />
