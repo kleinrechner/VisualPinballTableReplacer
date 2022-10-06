@@ -75,6 +75,7 @@
             // btnRun
             // 
             this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRun.Enabled = false;
             this.btnRun.Location = new System.Drawing.Point(628, 424);
             this.btnRun.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnRun.Name = "btnRun";
@@ -94,6 +95,7 @@
             this.txtPinUpFolder.Size = new System.Drawing.Size(673, 23);
             this.txtPinUpFolder.TabIndex = 5;
             this.txtPinUpFolder.Text = "C:\\vPinball\\PinUPSystem";
+            this.txtPinUpFolder.TextChanged += new System.EventHandler(this.txtPinUpFolder_TextChanged);
             // 
             // lblPinUpFolder
             // 

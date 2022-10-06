@@ -52,7 +52,7 @@ namespace VisualPinballTableReplacer.Services
             var newFullTablePath = oldTablePath.Replace(Path.GetFileName(oldTablePath), Path.GetFileName(newTablePath));
             try
             {
-                File.Copy(newTablePath, newFullTablePath);
+                File.Copy(newTablePath, newFullTablePath, true);
             }
             catch (Exception exc)
             {
@@ -65,10 +65,10 @@ namespace VisualPinballTableReplacer.Services
             var oldBackscreenPath = oldTablePath.Replace(Path.GetExtension(oldTablePath), ".directb2s");
             if (File.Exists(oldBackscreenPath))
             {
-                var newBackscreenPath = oldTablePath.Replace(Path.GetFileNameWithoutExtension(oldTablePath), Path.GetFileNameWithoutExtension(newTablePath));
+                var newBackscreenPath = oldBackscreenPath.Replace(Path.GetFileNameWithoutExtension(oldTablePath), Path.GetFileNameWithoutExtension(newTablePath));
                 try
                 {
-                    File.Move(oldBackscreenPath, newBackscreenPath);
+                    File.Move(oldBackscreenPath, newBackscreenPath, true);
                 }
                 catch (Exception exc)
                 {
@@ -85,7 +85,7 @@ namespace VisualPinballTableReplacer.Services
 
                 try
                 {
-                    File.Move(mediaFile, newMediaFile);
+                    File.Move(mediaFile, newMediaFile, true);
                 }
                 catch (Exception exc)
                 {
@@ -96,7 +96,7 @@ namespace VisualPinballTableReplacer.Services
 
         private async Task UpdateDatabase(string pinUpPath, string oldTableFile, string newTableFile)
         {
-            var databasePath = Path.Combine(pinUpPath, "PUPDatabase.db");
+            var databasePath = Path.Combine(pinUpPath, dbFileName);
             try
             {
                 var connectionStringBuilder = new SqliteConnectionStringBuilder();
