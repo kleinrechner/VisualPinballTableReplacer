@@ -15,90 +15,156 @@ namespace VisualPinballTableReplacer.Services
         private const string dbFileName = "PUPDatabase.db";
         private const string pinUpMediaFolder = "POPMedia";
 
-        public async Task ReplaceTable(string pinUpPath, string oldTablePath, string newTablePath)
+        private readonly IFormLoggingService _formLogging;
+
+        public ReplaceVirtualPinballTableService(IFormLoggingService formLogging)
         {
+            _formLogging = formLogging;
+        }
+
+        public async Task ReplaceTable(string pinUpPath, string oldTablePath, string newTablePath, CancellationToken cancellationToken = default)
+        {
+            _formLogging.LogInformation("Starting replace table...");
             var oldTableFile = Path.GetFileName(oldTablePath);
             var newTableFile = Path.GetFileName(newTablePath);
 
-            await UpdateDatabase(pinUpPath, oldTableFile, newTableFile);
-            ReplaceMediaFiles(Path.Combine(pinUpPath, pinUpMediaFolder), oldTableFile, newTableFile);
-            ReplaceTableFiles(Path.GetDirectoryName(oldTablePath), oldTablePath, newTablePath);
+            await UpdateDatabase(pinUpPath, oldTableFile, newTableFile, cancellationToken);
+            RenamePopMediaFolderFiles(Path.Combine(pinUpPath, pinUpMediaFolder), oldTableFile, newTableFile, cancellationToken);
+            ReplaceTableFiles(oldTablePath, newTablePath, cancellationToken);
+
+            _formLogging.LogSucceeded("Replace tables succeeded.");
         }
 
-        private void ReplaceTableFiles(string? tablePath, string oldTablePath, string newTablePath)
+        private void ReplaceTableFiles(string oldTablePath, string newTablePath, CancellationToken cancellationToken = default)
         {
-            RenameBackscreenFile(oldTablePath, newTablePath);
-            CopyTableFile(oldTablePath, newTablePath);
-            DeleteOriginalTable(oldTablePath);
+            RenameTableFolderFiles(oldTablePath, newTablePath, cancellationToken);
+            CopyTableFile(oldTablePath, newTablePath, cancellationToken);
+            DeleteOriginalTable(oldTablePath, cancellationToken);
         }
 
-        private static void DeleteOriginalTable(string oldTablePath)
+        private void DeleteOriginalTable(string oldTablePath, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (File.Exists(oldTablePath))
             {
                 try
                 {
+#if(!DEMO)
                     File.Delete(oldTablePath);
+#else
+                    Thread.Sleep(2500);
+#endif
+                    _formLogging.LogSucceeded($"Removed file {Path.GetFileName(oldTablePath)}");
                 }
                 catch (Exception exc)
                 {
-                    throw new DeleteFileFailedException(oldTablePath, exc);
+                    _formLogging.LogException(new DeleteFileFailedException(oldTablePath, exc));
                 }
             }
+            else
+            {
+                _formLogging.LogWarning("Original table file does not exists.");
+            }
         }
 
-        private static void CopyTableFile(string oldTablePath, string newTablePath)
+        private void CopyTableFile(string oldTablePath, string newTablePath, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var newFullTablePath = oldTablePath.Replace(Path.GetFileName(oldTablePath), Path.GetFileName(newTablePath));
-            try
+            if (!File.Exists(newFullTablePath))
             {
-                File.Copy(newTablePath, newFullTablePath, true);
-            }
-            catch (Exception exc)
-            {
-                throw new CopyFileFailedException(newTablePath, newFullTablePath, exc);
-            }
-        }
-
-        private static void RenameBackscreenFile(string oldTablePath, string newTablePath)
-        {
-            var oldBackscreenPath = oldTablePath.Replace(Path.GetExtension(oldTablePath), ".directb2s");
-            if (File.Exists(oldBackscreenPath))
-            {
-                var newBackscreenPath = oldBackscreenPath.Replace(Path.GetFileNameWithoutExtension(oldTablePath), Path.GetFileNameWithoutExtension(newTablePath));
                 try
                 {
-                    File.Move(oldBackscreenPath, newBackscreenPath, true);
+#if (!DEMO)
+                    File.Copy(newTablePath, newFullTablePath);
+#else
+                    Thread.Sleep(2500);
+#endif
+                    _formLogging.LogSucceeded($"Copy table {Path.GetFileName(oldTablePath)} to target folder succeeded.");
                 }
                 catch (Exception exc)
                 {
-                    throw new RenameFileFailedException(oldBackscreenPath, newBackscreenPath, exc);
+                    _formLogging.LogException(new CopyFileFailedException(newTablePath, newFullTablePath, exc));
+                }
+            }
+            else
+            {
+                _formLogging.LogWarning($"Target table file {newFullTablePath} already exists.");
+            }
+        }
+
+        private void RenameTableFolderFiles(string oldTablePath, string newTablePath, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            _formLogging.LogInformation($"Starting scan files in folder {Path.GetDirectoryName(oldTablePath)}...");
+            foreach (var mediaFile in Directory.GetFiles(Path.GetDirectoryName(oldTablePath), $"{Path.GetFileNameWithoutExtension(oldTablePath)}.*", SearchOption.TopDirectoryOnly)
+                                        .Where(x => Path.GetFileName(oldTablePath) != Path.GetFileName(x)))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var newMediaFile = mediaFile.Replace(Path.GetFileNameWithoutExtension(oldTablePath), Path.GetFileNameWithoutExtension(newTablePath));
+
+                if (!File.Exists(newMediaFile))
+                {
+                    try
+                    {
+#if (!DEMO)
+                        File.Move(mediaFile, newMediaFile);
+#else
+                        Thread.Sleep(2500);
+#endif
+                        _formLogging.LogSucceeded($"Rename file {Path.GetFileName(mediaFile)} to {Path.GetFileName(newMediaFile)} succeeded.");
+                    }
+                    catch (Exception exc)
+                    {
+                        _formLogging.LogException(new RenameFileFailedException(mediaFile, newMediaFile, exc));
+                    }
+                }
+                else
+                {
+                    _formLogging.LogWarning($"Target file {newMediaFile} already exists.");
                 }
             }
         }
 
-        private void ReplaceMediaFiles(string pinUpMediaPath, string oldTableFile, string newTableFile)
-        {            
-            foreach (var mediaFile in Directory.GetFiles(pinUpMediaPath, $"{Path.GetFileNameWithoutExtension(oldTableFile)}.*", SearchOption.AllDirectories))
+        private void RenamePopMediaFolderFiles(string pinUpMediaPath, string oldTableFile, string newTableFile, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            _formLogging.LogInformation($"Starting scan files in folder {pinUpMediaPath}...");
+            foreach (var mediaFile in Directory.GetFiles(pinUpMediaPath, $"{Path.GetFileNameWithoutExtension(oldTableFile)}*.*", SearchOption.AllDirectories))
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var newMediaFile = mediaFile.Replace(Path.GetFileNameWithoutExtension(oldTableFile), Path.GetFileNameWithoutExtension(newTableFile));
 
-                try
+                if (!File.Exists(newMediaFile))
                 {
-                    File.Move(mediaFile, newMediaFile, true);
+                    try
+                    {
+#if (!DEMO)
+                        File.Move(mediaFile, newMediaFile);
+#else
+                        Thread.Sleep(2500);
+#endif
+                        _formLogging.LogSucceeded($"Rename file {Path.GetFileName(mediaFile)} to {Path.GetFileName(newMediaFile)} succeeded.");
+                    }
+                    catch (Exception exc)
+                    {
+                        _formLogging.LogException(new RenameFileFailedException(mediaFile, newMediaFile, exc));
+                    }
                 }
-                catch (Exception exc)
+                else
                 {
-                    throw new RenameFileFailedException(mediaFile, newMediaFile, exc);
-                }                
+                    _formLogging.LogWarning($"Target file {newMediaFile} already exists.");
+                }
             }
         }
 
-        private async Task UpdateDatabase(string pinUpPath, string oldTableFile, string newTableFile)
+        private async Task UpdateDatabase(string pinUpPath, string oldTableFile, string newTableFile, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var databasePath = Path.Combine(pinUpPath, dbFileName);
             try
             {
+                _formLogging.LogInformation($"Starting update database {databasePath}...");
                 var connectionStringBuilder = new SqliteConnectionStringBuilder();
                 connectionStringBuilder.DataSource = databasePath;
 
@@ -126,14 +192,25 @@ namespace VisualPinballTableReplacer.Services
                         if (changed)
                         {
                             dbContext.Games.Update(currentGame);
+                            
+                            cancellationToken.ThrowIfCancellationRequested();
+#if (!DEMO)
                             await dbContext.SaveChangesAsync();
+#else
+                            Thread.Sleep(2500);
+#endif
+                            _formLogging.LogSucceeded($"Update table in database succeeded.");
                         }
+                    }
+                    else
+                    {
+                        _formLogging.LogWarning($"Table in could not be found in database.");
                     }
                 }
             }
             catch (Exception exc)
             {
-                throw new DatabaseUpdateFailedException(databasePath, exc);
+                _formLogging.LogException(new DatabaseUpdateFailedException(databasePath, exc));
             }
         }
     }

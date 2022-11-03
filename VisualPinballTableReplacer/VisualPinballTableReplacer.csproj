@@ -10,10 +10,18 @@
 	<Authors>Christian Fluhrer</Authors>
 	<Company></Company>
 	<Copyright>Copyright © Christian Fluhrer 2022</Copyright>
-	<Version>1.1.0</Version>
+	<Version>1.2.0</Version>
 	<ApplicationIcon>file_replace_outline_icon_139583.ico</ApplicationIcon>
 	<Title>VisualPinball Table Replacer</Title>
 	<PackageIcon>file_replace_outline_icon_139583.png</PackageIcon>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

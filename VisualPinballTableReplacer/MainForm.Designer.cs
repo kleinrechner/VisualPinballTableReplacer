@@ -1,6 +1,6 @@
 ﻿namespace VisualPinballTableReplacer
 {
-    partial class frmMain
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.btnNewFile = new System.Windows.Forms.Button();
             this.btnOldFile = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();

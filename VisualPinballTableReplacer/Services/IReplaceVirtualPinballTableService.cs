@@ -8,6 +8,6 @@ namespace VisualPinballTableReplacer.Services
 {
     public interface IReplaceVirtualPinballTableService
     {
-        Task ReplaceTable(string text, string sourceFilePath, string targetFilePath);
+        Task ReplaceTable(string text, string sourceFilePath, string targetFilePath, CancellationToken cancellationToken = default);
     }
 }
