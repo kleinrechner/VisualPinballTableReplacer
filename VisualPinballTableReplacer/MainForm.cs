@@ -2,12 +2,12 @@ using VisualPinballTableReplacer.Services;
 
 namespace VisualPinballTableReplacer
 {
-    public partial class frmMain : Form
+    public partial class MainForm : Form
     {
         private string oldFilePath = string.Empty;
         private string newFilePath = string.Empty;
         
-        public frmMain()
+        public MainForm()
         {
             InitializeComponent();
         }
@@ -123,22 +123,13 @@ namespace VisualPinballTableReplacer
 
             if (valid)
             {
-                btnRun.Enabled = false;
-                var _replaceVirtualPinballTableService = new ReplaceVirtualPinballTableService();
-                _replaceVirtualPinballTableService.ReplaceTable(pinUpFolderPath, oldFilePath, newFilePath)
-                    .ContinueWith(x =>
-                    {                        
-                        Invoke(() => btnRun.Enabled = true);
-                        if (x.IsCompletedSuccessfully)
-                        {
-                            MessageBox.Show("Table replaced successfully!", "Succeeded", MessageBoxButtons.OK, MessageBoxIcon.None);
-                        }
-                        else if (x.Exception != null)
-                        {
-                            var exception = x.Exception.InnerException ?? x.Exception;
-                            MessageBox.Show(exception.Message, "Replace table failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    });
+                using (var runForm = new RunForm())
+                {
+                    runForm.PinUpFolderPath = pinUpFolderPath;
+                    runForm.OldFilePath = oldFilePath;
+                    runForm.NewFilePath = newFilePath;
+                    runForm.ShowDialog(this);
+                }
             }           
         }
     }
